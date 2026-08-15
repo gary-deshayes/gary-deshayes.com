@@ -1,0 +1,63 @@
+---
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/ui';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const home = lang === 'fr' ? '/' : '/en/';
+---
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="hero-badge" data-reveal><span class="dot"></span>{t.hero.badge}</span>
+      <h1 data-reveal data-delay="1">Gary <span class="grad-text">Deshayes</span></h1>
+      <div class="hero-role mono" data-reveal data-delay="2">
+        <span id="typed" data-roles={JSON.stringify(t.hero.roles)}></span><span class="caret"></span>
+      </div>
+      <p class="hero-intro" data-reveal data-delay="3" set:html={t.hero.intro}></p>
+      <div class="hero-cta" data-reveal data-delay="4">
+        <a class="btn btn-primary" href={`${home}#projets`}>{t.hero.cta_work} <span aria-hidden="true">↓</span></a>
+        <a class="btn btn-ghost" href={`${home}#contact`}>{t.hero.cta_contact}</a>
+      </div>
+      <div class="hero-stats" data-reveal data-delay="4">
+        <div class="hero-stat"><b class="grad-text">10+</b><span>{t.hero.stat_projects}</span></div>
+        <div class="hero-stat"><b class="grad-text">4</b><span>{t.hero.stat_years}</span></div>
+        <div class="hero-stat"><b class="grad-text">99.9%</b><span>{t.hero.stat_uptime}</span></div>
+      </div>
+    </div>
+    <div data-reveal data-delay="2">
+      <div class="orbit-wrap">
+        <div class="orbit-ring"></div>
+        <div class="orbit-ring r2"></div>
+        <div class="orbit-moon moon-1"><i></i></div>
+        <div class="orbit-moon moon-2"><i></i></div>
+        <div class="orbit-moon moon-3"><i></i></div>
+        <div class="orbit-core">GD</div>
+        <div class="orbit-code"><span class="chev">&lt;/&gt;</span> {t.hero.orbit}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Effet machine à écrire sur les rôles
+  const el = document.getElementById('typed');
+  if (el) {
+    const roles = JSON.parse(el.dataset.roles || '[]');
+    let ri = 0, ci = 0, deleting = false;
+    const tick = () => {
+      const word = roles[ri];
+      el.textContent = word.slice(0, ci);
+      if (!deleting) {
+        if (ci < word.length) { ci++; setTimeout(tick, 55); }
+        else { deleting = true; setTimeout(tick, 1900); }
+      } else {
+        if (ci > 0) { ci--; setTimeout(tick, 28); }
+        else { deleting = false; ri = (ri + 1) % roles.length; setTimeout(tick, 350); }
+      }
+    };
+    tick();
+  }
+</script>

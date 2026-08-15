@@ -1,0 +1,107 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { useTranslations } from '../i18n/ui';
+
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const base = lang === 'fr' ? '' : '/en';
+const home = lang === 'fr' ? '/' : '/en/';
+
+const experience = [
+  { period: t.experience.e1_period, role: t.experience.e1_role, desc: t.experience.e1_desc },
+  { period: t.experience.e2_period, role: t.experience.e2_role, desc: t.experience.e2_desc },
+  { period: t.experience.e3_period, role: t.experience.e3_role, desc: t.experience.e3_desc },
+];
+
+const skills = [
+  { name: lang === 'fr' ? 'Frontend' : 'Frontend', items: ['Vue.js', 'Nuxt 3', 'Astro', 'TypeScript', 'Tailwind CSS'] },
+  { name: lang === 'fr' ? 'Backend' : 'Backend', items: ['Laravel', 'PHP', 'Node.js', 'API REST', 'MySQL'] },
+  { name: lang === 'fr' ? 'Déploiement' : 'Deployment', items: ['Vercel', 'GitHub Pages', 'GitHub Actions', 'Docker'] },
+  { name: lang === 'fr' ? 'Autre' : 'Other', items: ['SEO', 'Affiliation', 'i18n', 'Monitoring'] },
+];
+
+const projects = [
+  { name: t.projects.p1_name, desc: t.projects.p1_desc, url: 'https://verdiplan.com' },
+  { name: t.projects.p2_name, desc: t.projects.p2_desc, url: 'https://affiliate-cockpit-lemon.vercel.app' },
+  { name: t.projects.p3_name, desc: t.projects.p3_desc, url: 'https://gary-deshayes.github.io/permaculture-foret/' },
+  { name: t.projects.p4_name, desc: t.projects.p4_desc, url: null },
+];
+---
+
+<Layout lang={lang} title={lang === 'fr' ? 'CV' : 'Resume'}>
+  <Nav lang={lang} />
+  <main class="cv-page">
+    <div class="cv-header">
+      <div>
+        <h1>Gary <span class="grad-text">Deshayes</span></h1>
+        <div class="role">{lang === 'fr' ? 'Développeur Web Full-Stack' : 'Full-Stack Web Developer'}</div>
+        <div class="cv-contact-row">
+          <a href="mailto:contact@gary-deshayes.com">✉ contact@gary-deshayes.com</a>
+          <a href="https://github.com/gary-deshayes" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/gary-deshayes" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <span>📍 France</span>
+        </div>
+      </div>
+      <a class="btn btn-primary no-print" href="javascript:window.print()">⬇ {lang === 'fr' ? 'Télécharger en PDF' : 'Download PDF'}</a>
+    </div>
+
+    <section class="cv-section">
+      <h2>👨‍💻 {lang === 'fr' ? 'Profil' : 'Profile'}</h2>
+      <p style="color:var(--muted);">{lang === 'fr'
+        ? 'Développeur web indépendant spécialisé dans la création de produits web complets : SaaS, blogs monétisés, outils internes. Autonome de l\'idée au déploiement, avec un fort accent sur la performance, le SEO et l\'automatisation.'
+        : 'Freelance web developer specialized in building complete web products: SaaS, monetized blogs, internal tools. Autonomous from idea to deployment, with a strong focus on performance, SEO and automation.'}</p>
+    </section>
+
+    <section class="cv-section">
+      <h2>💼 {t.experience.title}</h2>
+      {
+        experience.map((e) => (
+          <div class="cv-item">
+            <div class="period mono">{e.period}</div>
+            <h3>{e.role}</h3>
+            <p>{e.desc}</p>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="cv-section">
+      <h2>🚀 {lang === 'fr' ? 'Projets' : 'Projects'}</h2>
+      {
+        projects.map((p) => (
+          <div class="cv-item">
+            <h3>{p.name}</h3>
+            <p>{p.desc}</p>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="cv-section">
+      <h2>🛠 {t.skills.title}</h2>
+      {
+        skills.map((s) => (
+          <div class="cv-item">
+            <h3>{s.name}</h3>
+            <div class="skill-tags" style="margin-top:8px;">{s.items.map((it) => <span class="chip">{it}</span>)}</div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="cv-section">
+      <h2>🌐 {lang === 'fr' ? 'Langues' : 'Languages'}</h2>
+      <div class="cv-item">
+        <h3>{lang === 'fr' ? 'Français — natif · Anglais — professionnel' : 'French — native · English — professional'}</h3>
+      </div>
+    </section>
+
+    <div style="text-align:center;margin-top:30px;">
+      <a class="btn btn-ghost" href={home}>← {lang === 'fr' ? 'Retour à l\'accueil' : 'Back to home'}</a>
+    </div>
+  </main>
+  <Footer lang={lang} />
+</Layout>

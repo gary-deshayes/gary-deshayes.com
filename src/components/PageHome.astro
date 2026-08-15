@@ -1,0 +1,29 @@
+---
+import type { Lang } from '../i18n/ui';
+import Nav from './Nav.astro';
+import Hero from './Hero.astro';
+import Marquee from './Marquee.astro';
+import About from './About.astro';
+import Skills from './Skills.astro';
+import Projects from './Projects.astro';
+import Experience from './Experience.astro';
+import BlogPreview from './BlogPreview.astro';
+import Contact from './Contact.astro';
+import Footer from './Footer.astro';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+---
+
+<Nav lang={lang} />
+<main>
+  <Hero lang={lang} />
+  <Marquee />
+  <About lang={lang} />
+  <Skills lang={lang} />
+  <Projects lang={lang} />
+  <Experience lang={lang} />
+  <BlogPreview lang={lang} />
+  <Contact lang={lang} />
+</main>
+<Footer lang={lang} />

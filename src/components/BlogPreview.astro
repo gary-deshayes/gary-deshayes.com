@@ -1,0 +1,37 @@
+---
+import { getPosts, slugOf } from '../lib/posts';
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/ui';
+
+interface Props { lang: Lang; limit?: number; }
+const { lang, limit = 3 } = Astro.props;
+const t = useTranslations(lang);
+const posts = (await getPosts(lang)).slice(0, limit);
+const base = lang === 'fr' ? '/blog' : '/en/blog';
+---
+
+<section id="blog">
+  <div class="container">
+    <div class="kicker" data-reveal>{t.blog.kicker}</div>
+    <h2 class="section-title" data-reveal>{t.blog.title}</h2>
+    <p class="section-sub" data-reveal>{t.blog.sub}</p>
+    {
+      posts.length > 0 ? (
+        <div class="blog-grid">
+          {
+            posts.map((post, i) => (
+              <article class="glass post-card" data-reveal data-delay={String(i)}>
+                <span class="date mono">{post.data.pubDate.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                <h3><a href={`${base}/${slugOf(post)}`}>{post.data.title}</a></h3>
+                <p>{post.data.description}</p>
+                <a class="read-more" href={`${base}/${slugOf(post)}`}>{t.blog.read} <span class="arrow">→</span></a>
+              </article>
+            ))
+          }
+        </div>
+      ) : (
+        <p data-reveal style="color:var(--muted);">{t.blog.empty}</p>
+      )
+    }
+  </div>
+</section>

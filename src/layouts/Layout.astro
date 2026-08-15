@@ -1,0 +1,172 @@
+---
+import '../styles/global.css';
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const { lang, title, description, ogImage } = Astro.props;
+const t = useTranslations(lang);
+
+const siteTitle = 'Gary Deshayes — Développeur Web';
+const metaTitle = title ? `${title} — Gary Deshayes` : siteTitle;
+const metaDescription = description ?? (lang === 'fr'
+  ? 'Portfolio de Gary Deshayes, développeur web full-stack. Nuxt, Astro, Laravel — SaaS, blogs SEO et affiliation.'
+  : 'Portfolio of Gary Deshayes, full-stack web developer. Nuxt, Astro, Laravel — SaaS, SEO blogs and affiliate marketing.');
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const alternate = lang === 'fr'
+  ? new URL(`/en${Astro.url.pathname === '/' ? '' : Astro.url.pathname}`, Astro.site)
+  : new URL(Astro.url.pathname.replace(/^\/en/, '') || '/', Astro.site);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{metaTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang={lang} href={canonical} />
+    <link rel="alternate" hreflang={lang === 'fr' ? 'en' : 'fr'} href={alternate} />
+    <link rel="alternate" hreflang="x-default" href="https://gary-deshayes.com/" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Gary Deshayes" />
+    <meta property="og:title" content={metaTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#04020e" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+  </head>
+  <body>
+    <slot />
+    <script is:inline>
+      // Starfield canvas — étoiles scintillantes + étoiles filantes + parallaxe souris
+      (function () {
+        function init() {
+          const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (reduced) return;
+          const canvas = document.createElement('canvas');
+          canvas.id = 'starfield';
+          document.body.prepend(canvas);
+        const ctx = canvas.getContext('2d');
+        let W, H, stars = [], shooting = [];
+        function resize() {
+          W = canvas.width = window.innerWidth;
+          H = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+        const COUNT = Math.min(220, Math.floor((W * H) / 9000));
+        for (let i = 0; i < COUNT; i++) {
+          stars.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            r: Math.random() * 1.4 + 0.3,
+            base: Math.random() * 0.5 + 0.25,
+            tw: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.0008 + 0.0003,
+            hue: Math.random() > 0.85 ? 270 : 200,
+          });
+        }
+        let mx = 0, my = 0;
+        window.addEventListener('mousemove', (e) => {
+          mx = (e.clientX / W - 0.5) * 2;
+          my = (e.clientY / H - 0.5) * 2;
+        });
+        function spawnShooting() {
+          if (Math.random() > 0.006) return;
+          shooting.push({
+            x: Math.random() * W * 0.8 + W * 0.2,
+            y: Math.random() * H * 0.3,
+            vx: -(Math.random() * 5 + 4),
+            vy: Math.random() * 2.5 + 2,
+            life: 1,
+          });
+        }
+        let last = 0;
+        function frame(t) {
+          requestAnimationFrame(frame);
+          const dt = Math.min((t - last) / 1000 || 0.016, 0.05);
+          last = t;
+          ctx.clearRect(0, 0, W, H);
+          for (const s of stars) {
+            s.tw += s.speed * 60 * dt;
+            const alpha = s.base + Math.sin(s.tw) * 0.35;
+            const px = s.x + mx * s.r * 6;
+            const py = s.y + my * s.r * 6;
+            ctx.beginPath();
+            ctx.arc(px, py, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${s.hue}, 90%, 82%, ${alpha})`;
+            ctx.fill();
+          }
+          spawnShooting();
+          shooting = shooting.filter((sh) => sh.life > 0);
+          for (const sh of shooting) {
+            sh.x += sh.vx * dt * 60;
+            sh.y += sh.vy * dt * 60;
+            sh.life -= dt * 1.4;
+            const tail = 18;
+            const grad = ctx.createLinearGradient(sh.x, sh.y, sh.x - sh.vx * 0.9, sh.y - sh.vy * 0.9);
+            grad.addColorStop(0, `rgba(200, 180, 255, ${Math.max(sh.life, 0) * 0.9})`);
+            grad.addColorStop(1, 'rgba(200, 180, 255, 0)');
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 1.6;
+            ctx.beginPath();
+            ctx.moveTo(sh.x, sh.y);
+            ctx.lineTo(sh.x - sh.vx * 0.9, sh.y - sh.vy * 0.9);
+            ctx.stroke();
+          }
+        }
+          requestAnimationFrame(frame);
+        }
+        document.addEventListener('DOMContentLoaded', init);
+      })();
+
+      // Reveal on scroll
+      (function () {
+        const els = document.querySelectorAll('[data-reveal]');
+        if (!('IntersectionObserver' in window)) {
+          els.forEach((el) => el.classList.add('visible'));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+        );
+        els.forEach((el) => io.observe(el));
+      })();
+
+      // Burger menu mobile
+      (function () {
+        const burger = document.querySelector('.nav-burger');
+        const links = document.querySelector('.nav-links');
+        if (!burger || !links) return;
+        burger.addEventListener('click', () => links.classList.toggle('open'));
+        links.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => links.classList.remove('open')));
+      })();
+    </script>
+  </body>
+</html>

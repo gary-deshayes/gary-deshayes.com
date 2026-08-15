@@ -1,0 +1,35 @@
+---
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/ui';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const groups = [
+  { emoji: '🎨', name: t.skills.front, tags: ['Vue.js', 'Nuxt 3', 'Astro', 'TypeScript', 'Tailwind CSS', 'JavaScript'] },
+  { emoji: '⚙️', name: t.skills.back, tags: ['Laravel', 'PHP', 'Node.js', 'API REST', 'MySQL', 'SQLite'] },
+  { emoji: '☁️', name: t.skills.devops, tags: ['Vercel', 'GitHub Pages', 'GitHub Actions', 'Docker', 'CI/CD', 'Monitoring'] },
+  { emoji: '📈', name: t.skills.product, tags: ['SEO technique', 'Affiliation', 'i18n FR/EN', 'Google Analytics', 'Content strategy'] },
+];
+---
+
+<section id="stack">
+  <div class="container">
+    <div class="kicker" data-reveal>{t.skills.kicker}</div>
+    <h2 class="section-title" data-reveal>{t.skills.title}</h2>
+    <p class="section-sub" data-reveal>{t.skills.sub}</p>
+    <div class="skills-grid">
+      {
+        groups.map((g, i) => (
+          <div class="glass skill-card" data-reveal data-delay={String(i)}>
+            <h3><span class="emoji">{g.emoji}</span>{g.name}</h3>
+            <div class="skill-tags">
+              {g.tags.map((tag) => <span class="chip">{tag}</span>)}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

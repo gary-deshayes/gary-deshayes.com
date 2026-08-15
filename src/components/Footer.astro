@@ -1,0 +1,20 @@
+---
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/ui';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <div class="container footer-inner">
+    <p>© {year} Gary Deshayes — {t.footer.rights}</p>
+    <div class="footer-links">
+      <a href="https://github.com/gary-deshayes" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href={lang === 'fr' ? '/rss.xml' : '/en/rss.xml'}>RSS</a>
+      <a href={`${lang === 'fr' ? '/cv' : '/en/cv'}`}>{t.nav.cv}</a>
+    </div>
+  </div>
+</footer>

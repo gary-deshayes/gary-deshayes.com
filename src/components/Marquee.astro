@@ -1,0 +1,16 @@
+---
+const items = [
+  'Nuxt 3', 'Vue.js', 'Astro', 'Laravel', 'PHP', 'TypeScript',
+  'Tailwind CSS', 'Node.js', 'MySQL', 'REST API', 'Vercel',
+  'GitHub Pages', 'Docker', 'SEO', 'Affiliation', 'i18n', 'CI/CD',
+];
+const row = [...items, ...items];
+---
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <div class="marquee-item">
+      {row.map((it) => <span>{it}</span>)}
+    </div>
+  </div>
+</div>

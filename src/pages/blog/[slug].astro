@@ -1,0 +1,46 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { render } from 'astro:content';
+import { getPosts, slugOf } from '../../lib/posts';
+import { useTranslations } from '../../i18n/ui';
+
+export async function getStaticPaths() {
+  const posts = (await getPosts()).filter((p) => p.data.lang === 'fr');
+  return posts.map((post) => ({ params: { slug: slugOf(post) }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const t = useTranslations('fr');
+const { title, description, pubDate, tags } = post.data;
+---
+
+<Layout lang="fr" title={title} description={description}>
+  <Nav lang="fr" />
+  <main class="article">
+    <a class="back" href="/blog">← {t.blog.all}</a>
+    <article>
+      <header>
+        <div class="article-meta mono">
+          <span>{pubDate.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          <span>·</span>
+          <span>{Math.max(1, Math.round(Content.toString().length / 900))} min</span>
+        </div>
+        <h1>{title}</h1>
+      </header>
+      <div class="article-body">
+        <Content />
+      </div>
+      <div class="article-tags">
+        {tags.map((tag) => <span class="chip">#{tag}</span>)}
+      </div>
+      <div class="article-nav">
+        <a href="/blog">← {t.blog.all}</a>
+        <a href="/#contact">✉️ {t.contact.title}</a>
+      </div>
+    </article>
+  </main>
+  <Footer lang="fr" />
+</Layout>

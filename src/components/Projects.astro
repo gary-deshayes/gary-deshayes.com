@@ -1,0 +1,79 @@
+---
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/ui';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const projects = [
+  {
+    icon: '🌱',
+    name: t.projects.p1_name,
+    desc: t.projects.p1_desc,
+    status: 'live',
+    statusLabel: t.projects.live,
+    url: 'https://verdiplan.com',
+    tags: ['Nuxt 3', 'Laravel', 'MySQL'],
+  },
+  {
+    icon: '🛰️',
+    name: t.projects.p2_name,
+    desc: t.projects.p2_desc,
+    status: 'live',
+    statusLabel: t.projects.live,
+    url: 'https://affiliate-cockpit-lemon.vercel.app',
+    tags: ['Dashboard', 'Monitoring', 'API'],
+  },
+  {
+    icon: '🌿',
+    name: t.projects.p3_name,
+    desc: t.projects.p3_desc,
+    status: 'live',
+    statusLabel: t.projects.live,
+    url: 'https://gary-deshayes.github.io/permaculture-foret/',
+    tags: ['Astro', 'SEO', 'Affiliation'],
+  },
+  {
+    icon: '🌌',
+    name: t.projects.p4_name,
+    desc: t.projects.p4_desc,
+    status: 'dev',
+    statusLabel: t.projects.dev,
+    url: null,
+    tags: ['Astro', 'GitHub Pages', 'Pipeline'],
+  },
+];
+---
+
+<section id="projets">
+  <div class="container">
+    <div class="kicker" data-reveal>{t.projects.kicker}</div>
+    <h2 class="section-title" data-reveal>{t.projects.title}</h2>
+    <p class="section-sub" data-reveal>{t.projects.sub}</p>
+    <div class="projects-grid">
+      {
+        projects.map((p, i) => (
+          <article class="glass project-card" data-reveal data-delay={String(i % 3)}>
+            <div class="project-top">
+              <div class="project-icon">{p.icon}</div>
+              <span class={`project-status ${p.status}`}>{p.statusLabel}</span>
+            </div>
+            <h3>{p.name}</h3>
+            <p>{p.desc}</p>
+            <div class="skill-tags">{p.tags.map((tag) => <span class="chip">{tag}</span>)}</div>
+            <div class="project-links">
+              {
+                p.url ? (
+                  <a href={p.url} target="_blank" rel="noopener noreferrer">{t.projects.visit} <span class="arrow">→</span></a>
+                ) : (
+                  <span class="mono" style="color:var(--muted);font-size:13px;">// {t.projects.dev}…</span>
+                )
+              }
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
