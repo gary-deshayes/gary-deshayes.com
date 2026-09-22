@@ -22,6 +22,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const alternate = lang === 'fr'
   ? new URL(`/en${Astro.url.pathname === '/' ? '' : Astro.url.pathname}`, Astro.site)
   : new URL(Astro.url.pathname.replace(/^\/en/, '') || '/', Astro.site);
+
+// Mesure d'audience + Search Console : pilotés par variables d'environnement
+// (à définir dans Vercel → Settings → Environment Variables).
+// PUBLIC_GA_ID                     : identifiant de flux GA4, ex. G-XXXXXXXXXX
+// PUBLIC_GOOGLE_SITE_VERIFICATION  : jeton de validation Search Console (balise HTML)
+const gaId = import.meta.env.PUBLIC_GA_ID;
+const gscVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 ---
 
 <!doctype html>
@@ -52,6 +59,22 @@ const alternate = lang === 'fr'
       rel="stylesheet"
     />
 
+    <!-- Google Search Console — validation par balise HTML -->
+    {gscVerification && <meta name="google-site-verification" content={gscVerification} />}
+
+    <!-- Google Analytics 4 (gtag.js) -->
+    {gaId && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+        <script
+          is:inline
+          set:html={`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaId}', { anonymize_ip: true });`}
+        />
+      </>
+    )}
   </head>
   <body>
     <slot />
